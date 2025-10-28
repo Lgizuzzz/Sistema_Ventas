@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Proveedor;
 use Illuminate\Http\Request;
 
 class Proveedores extends Controller
@@ -12,7 +13,8 @@ class Proveedores extends Controller
     public function index()
     {
         $titulo = 'Proveedores';
-        return view('modules.proveedores.index', compact('titulo'));
+        $items = Proveedor::all();
+        return view('modules.proveedores.index', compact('items', 'titulo'));
     }
 
     /**
@@ -20,7 +22,8 @@ class Proveedores extends Controller
      */
     public function create()
     {
-        //
+        $titulo = 'Agregar Proveedor';
+        return view('modules.proveedores.create', compact('titulo'));
     }
 
     /**
@@ -28,7 +31,18 @@ class Proveedores extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try{
+            $item = new Proveedor();
+            $item->nombre = $request->nombre;
+            $item->telefono = $request->telefono;
+            $item->email = $request->email;
+            $item->direccion = $request->direccion;
+            $item->notas = $request->notas;
+            $item->save();
+            return to_route('proveedores')->with("success", "Proveedor agregado con exito!!");
+        }catch(\Throwable $th){
+            return to_route('proveedores')->with("error", "Fallo al agregar Proveedor!!". $th->getMessage());
+        }
     }
 
     /**
@@ -36,7 +50,9 @@ class Proveedores extends Controller
      */
     public function show(string $id)
     {
-        //
+        $item = Proveedor::find($id);
+        $titulo = "Eliminar un  Proveedor";
+        return view('modules.proveedores.show', compact('item', 'titulo'));
     }
 
     /**
@@ -44,7 +60,9 @@ class Proveedores extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $item = Proveedor::find($id);
+        $titulo = "Editar Proveedor";
+        return view('modules.proveedores.edit', compact('item', 'titulo'));
     }
 
     /**
@@ -52,7 +70,18 @@ class Proveedores extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        try{
+            $item = Proveedor::find($id);
+            $item->nombre = $request->nombre;
+            $item->telefono = $request->telefono;
+            $item->email = $request->email;
+            $item->direccion = $request->direccion;
+            $item->notas = $request->notas;
+            $item->save();
+            return to_route('proveedores')->with("success", "Actualizado con exito!!");
+        }catch(\Throwable $th){
+            return to_route('proveedores')->with("error", "No se pudo Actualizar!!". $th->getMessage());
+        }
     }
 
     /**
@@ -60,6 +89,12 @@ class Proveedores extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try{
+            $item = Proveedor::find($id);
+            $item->delete();
+            return to_route('proveedores')->with("success", "Proveedor Eliminado con Exito!!");
+        }catch(\Throwable $th){
+            return to_route('proveedores')->with("error", "No se pudo Eliminar!!". $th->getMessage());
+        }
     }
 }
