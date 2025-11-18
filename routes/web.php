@@ -3,10 +3,12 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Categorias;
 use App\Http\Controllers\Clientes;
+use App\Http\Controllers\Compras;
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\DetalleVentas;
 use App\Http\Controllers\Productos;
 use App\Http\Controllers\Proveedores;
+use App\Http\Controllers\Reportes_productos;
 use App\Http\Controllers\Usuarios;
 use App\Http\Controllers\Ventas;
 use Illuminate\Support\Facades\Route;
@@ -42,6 +44,21 @@ Route::prefix('categorias')->middleware('auth')->group(function(){
 
 Route::prefix('productos')->middleware('auth')->group(function(){
     Route::get('/', [Productos::class, 'index'])->name('productos');
+    Route::get('/create', [Productos::class, 'create'])->name('productos.create');
+    Route::post('/store', [Productos::class, 'store'])->name('productos.store');
+    Route::get('/edit/{id}', [Productos::class, 'edit'])->name('productos.edit');
+    Route::put('/update/{id}', [Productos::class, 'update'])->name('productos.update');
+
+    Route::get('/show-image/{id}', [Productos::class, 'show_image'])->name('productos.show.image');
+    Route::put('/update-imag/{id}', [Productos::class, 'update_image'])->name('productos.update.image');
+
+    Route::get('/show/{id}', [Productos::class, 'show'])->name('productos.show');
+    Route::delete('/destroy/{id}', [Productos::class, 'destroy'])->name('productos.destroy');
+    Route::get('/cambiar-estado/{id}/{estado}', [Productos::class, 'estado'])->name('productos.estado');
+});
+
+Route::prefix('reportes_productos')->middleware('auth')->group(function(){
+    Route::get('/', [Reportes_productos::class, 'index'])->name('reportes_productos');
 });
 
 Route::prefix('proveedores')->middleware('auth')->group(function(){
@@ -63,4 +80,14 @@ Route::prefix('usuarios')->middleware('auth')->group(function(){
     Route::get('/tbody', [Usuarios::class, 'tbody'])->name('usuarios.tbody');
     Route::get('/cambiar-estado/{id}/{estado}', [Usuarios::class, 'estado'])->name('usuarios.estado');
     Route::get('/cambiar-contrasena/{id}/{password}', [Usuarios::class, 'cambio_contrasena'])->name('usuarios.contrasena');
+});
+
+Route::prefix('compras')->middleware('auth')->group(function(){
+    Route::get('/', [Compras::class, 'index'])->name('compras');
+    Route::get('/create/{id_producto}', [Compras::class, 'create'])->name('compras.create');
+    Route::post('/store', [Compras::class, 'store'])->name('compras.store');
+    Route::get('/edit/{id}', [Compras::class, 'edit'])->name('compras.edit');
+    Route::put('/update/{id}', [Compras::class, 'update'])->name('compras.update');
+    Route::get('/show/{id}', [Compras::class, 'show'])->name('compras.show');
+    Route::delete('/destroy/{id}', [Compras::class, 'destroy'])->name('compras.destroy');
 });

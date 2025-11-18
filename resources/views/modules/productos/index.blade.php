@@ -18,11 +18,10 @@
                 Administrar el stock del sistema
               </p>
               <!-- Table with stripped rows -->
-              <a href="#" class="btn btn-primary">
+              <a href="{{route('productos.create')}}" class="btn btn-primary">
                 <i class="fa-solid fa-circle-plus"></i>
                 Crear Producto
               </a>
-              <a href="" class="btn btn-primary">Productos con stock minimo</a>
               <hr>
               <table class="table table-bordered datatable">
                 <thead>
@@ -43,28 +42,37 @@
                   </tr>
                 </thead>
                 <tbody>
-
+                  @foreach ($items as $item)
                   <tr class="text-center">
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>{{$item->nombre_categoria}}</td>
+                    <td>{{$item->nombre_proveedor}}</td>
+                    <td>{{$item->nombre}}</td>
                     <td>
-                      <a href="#" class="btn btn-warning">
+                      <img src="{{asset('storage/'. $item->imagen_producto)}}" alt="" width="60px" height="60px">
+                      <a href="{{route('productos.show.image', $item->imagen_id)}}" 
+                      class="badge rounded-pill bg-warning text-dark"><i class="fa-solid fa-pen-to-square"></i></a>
+                    </td>
+                    <td>{{$item->descripcion}}</td>
+                    <td>{{$item->cantidad}}</td>
+                    <td>S/.{{$item->precio_venta}}</td>
+                    <td>S/.{{$item->precio_compra}}</td>
+                    <td>
+                      <div class="form-check form-switch">
+                          <input class="form-check-input" type="checkbox" id="{{$item->id}}" 
+                          {{$item->activo ? 'checked': ''}}>
+                        </div>
+                    </td>
+                    <td> <a href="{{ route('compras.create', $item->id)}}" class="btn btn-info">Comprar</a> </td>
+                    <td>
+                      <a href="{{ route('productos.edit', $item->id)}}" class="btn btn-warning">
                         <i class="fa-solid fa-pen-to-square"></i>
                       </a>
-                      <a href="#" class="btn btn-danger">
+                      <a href="{{ route('productos.show', $item->id)}}" class="btn btn-danger">
                         <i class="fa-solid fa-trash-can"></i>
                       </a>
                     </td>
                   </tr>
-                  
+                  @endforeach
                 </tbody>
               </table>
               <!-- End Table with stripped rows -->
@@ -76,3 +84,39 @@
     
 </main>
 @endsection
+
+@push('scripts')
+<script>
+  function cambiar_estado(id,estado){
+        $.ajax({
+          type: "GET",
+          url: "productos/cambiar-estado/" + id + "/" + estado,
+          success: function(respuesta){
+            if(respuesta == 1){
+              Swal.fire({
+                title: 'Exito!',
+                text: 'Cambio de Estado Exitoso!',
+                icon: 'success',
+                confirmButtonText: 'Aceptar'
+              });
+            }else{
+              Swal.fire({
+                title: 'Error!',
+                text: 'No se llevo acabo el Cambio ',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+              });
+            }
+          }
+        })
+      }
+
+  $(document).ready(function(){
+        $('.form-check-input').on("change", function(){
+          let id = $(this).attr("id");
+          let estado = $(this).is(":checked")? 1 : 0;
+          cambiar_estado(id, estado);
+        });
+      });
+</script>
+@endpush
