@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('proveedor_id')->constrained('proveedores')->cascadeOnDelete();
             $table->foreignId('categoria_id')->constrained('categorias')->cascadeOnDelete();
+            $table->string('codigo');
             $table->string('nombre',50);
             $table->string('descripcion',500)->nullable();
             $table->integer('cantidad')->default(0);

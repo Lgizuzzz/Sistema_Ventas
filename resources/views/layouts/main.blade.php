@@ -24,7 +24,9 @@
   <link href="{{ asset('NiceAdmin/assets/vendor/quill/quill.snow.css') }}" rel="stylesheet">
   <link href="{{ asset('NiceAdmin/assets/vendor/quill/quill.bubble.css') }}" rel="stylesheet">
   <link href="{{ asset('NiceAdmin/assets/vendor/remixicon/remixicon.css') }}" rel="stylesheet">
-  <link href="{{ asset('NiceAdmin/assets/vendor/simple-datatables/style.css') }}" rel="stylesheet">
+  
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.3.5/css/dataTables.dataTables.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.5/css/buttons.dataTables.css">
 
   <!-- Template Main CSS File -->
   <link href="{{ asset('NiceAdmin/assets/css/style.css') }}" rel="stylesheet">
@@ -60,15 +62,38 @@
   <script src="{{ asset('NiceAdmin/assets/vendor/chart.js/chart.umd.js') }}"></script>
   <script src="{{ asset('NiceAdmin/assets/vendor/echarts/echarts.min.js') }}"></script>
   <script src="{{ asset('NiceAdmin/assets/vendor/quill/quill.js') }}"></script>
-  <script src="{{ asset('NiceAdmin/assets/vendor/simple-datatables/simple-datatables.js') }}"></script>
+  
   <script src="{{ asset('NiceAdmin/assets/vendor/tinymce/tinymce.min.js') }}"></script>
   <script src="{{ asset('NiceAdmin/assets/vendor/php-email-form/validate.js') }}"></script>
 
   <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+  
+  <!-- Datatable -->
+  <script src="https://cdn.datatables.net/2.3.5/js/dataTables.js"></script>
+  <script src="https://cdn.datatables.net/buttons/3.2.5/js/dataTables.buttons.js"></script>
+  <script src="https://cdn.datatables.net/buttons/3.2.5/js/buttons.dataTables.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+  <script src="https://cdn.datatables.net/buttons/3.2.5/js/buttons.html5.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/3.2.5/js/buttons.print.min.js"></script>
+
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
   <script>
+    $('.datatable').DataTable({
+    layout: {
+        topStart: {
+            buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+        }
+      },
+      language:{
+        url: '//cdn.datatables.net/plug-ins/2.2.2/i18n/es-MX.json',
+      }
+    });
+
   @if(session('success'))
     Swal.fire({
       title: 'Exito!',
@@ -90,8 +115,6 @@
   @stack('scripts')
 
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     $('.datatable').DataTable({

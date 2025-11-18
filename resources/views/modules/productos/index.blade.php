@@ -28,6 +28,7 @@
                   <tr>
                     <th class="text-center">Categoria</th>
                     <th class="text-center">Proveedor</th>
+                    <th class="text-center">Codigo</th>
                     <th class="text-center">Nombre</th>
                     <th class="text-center">Imagen</th>
                     <th class="text-center">Descripcion</th>
@@ -46,6 +47,7 @@
                   <tr class="text-center">
                     <td>{{$item->nombre_categoria}}</td>
                     <td>{{$item->nombre_proveedor}}</td>
+                    <td class="text-center">{{$item->codigo}}</td>
                     <td>{{$item->nombre}}</td>
                     <td>
                       <img src="{{asset('storage/'. $item->imagen_producto)}}" alt="" width="60px" height="60px">
@@ -53,7 +55,7 @@
                       class="badge rounded-pill bg-warning text-dark"><i class="fa-solid fa-pen-to-square"></i></a>
                     </td>
                     <td>{{$item->descripcion}}</td>
-                    <td>{{$item->cantidad}}</td>
+                    <td class="text-center">{{$item->cantidad}}</td>
                     <td>S/.{{$item->precio_venta}}</td>
                     <td>S/.{{$item->precio_compra}}</td>
                     <td>
