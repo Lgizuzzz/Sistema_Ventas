@@ -111,7 +111,10 @@
       confirmButtonText: 'Aceptar'
     });
   @endif
+  
   </script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   @stack('scripts')
 
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -121,7 +124,7 @@
       responsive: true,
       pageLength: 10,
       order: [[0, 'asc']],
-      language: { url: 'https://cdn.datatables.net/plug-ins/1.13.8/i18n/es-ES.json' }
+      //language: { url: 'https://cdn.datatables.net/plug-ins/1.13.8/i18n/es-ES.json' }
     });
   });
 </script>

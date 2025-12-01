@@ -2,63 +2,96 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Detalle_venta;
+use App\Models\Producto;
+use App\Models\Venta;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DetalleVentas extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        return view('modules.detalles_ventas.index');
+    public function index(){
+        $titulo = 'Detalles de Ventas';
+        $items = Venta::select(
+            'ventas.*',
+            'users.name as nombre_usuario'
+        )
+        ->join('users', 'ventas.user_id', '=', 'users.id')
+        ->orderBy('ventas.created_at', 'desc')
+        ->get();
+        return view('modules.detalles_ventas.index', compact('titulo', 'items'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+    public function vista_detalle($id){
+        $titulo = 'Detalle de Venta';
+        $venta = Venta::select(
+            'ventas.*',
+            'users.name as nombre_usuario'
+        )
+        ->join('users', 'ventas.user_id', '=', 'users.id')
+        ->where('ventas.id', $id)
+        ->firstOrFail();
+
+        $detalles = Detalle_venta::select(
+            'detalle_venta.*',
+            'productos.nombre as nombre_producto'
+        )
+        ->join('productos', 'detalle_venta.producto_id', '=', 'productos.id')
+        ->where('venta_id', $id)
+        ->get();
+
+        return view('modules.detalles_ventas.detalle_venta', compact('titulo', 'venta', 'detalles'));
+    }
+    
+    public function revocar($id){
+        DB::beginTransaction();
+        try {
+            $detalles = Detalle_venta::select(
+                'producto_id',
+                'cantidad'
+            )
+            ->where('venta_id', $id)
+            ->get();
+
+            //devolver Stock
+            foreach ($detalles as $detalle) {
+                Producto::where('id', $detalle->producto_id)
+                ->increment('cantidad', $detalle->cantidad);
+            }
+
+            //eliminar productos vendidos
+            Detalle_venta::where('venta_id', $id)->delete();
+            Venta::where('id', $id)->delete();
+
+            DB::commit();
+            return to_route('detalles-venta')->with('success', 'Revocacion de Venta Exitosa!!');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return to_route('detalles-venta')->with('error', 'No se pudo Revocar la Venta!!');
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+    public function generarTicket($id){
+        $venta = Venta::select(
+            'ventas.*',
+            'users.name as nombre_usuario'
+        )
+        ->join('users', 'ventas.user_id', '=', 'users.id')
+        ->where('ventas.id', $id)
+        ->firstOrFail();
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+        $detalles = Detalle_venta::select(
+            'detalle_venta.*',
+            'productos.nombre as nombre_producto'
+        )
+        ->join('productos', 'detalle_venta.producto_id', '=', 'productos.id')
+        ->where('venta_id', $id)
+        ->get();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        //generar el pdf
+        $pdf = Pdf::loadView("modules.detalles_ventas.ticket", compact('venta', 'detalles'));
+        //descargar el pdf
+        return $pdf->stream("ticket_compra_{$venta->id}.pdf");
     }
 }
